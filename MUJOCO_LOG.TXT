@@ -4,3 +4,15 @@ WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Ti
 Sat Dec 21 22:21:39 2019
 WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 8.6000.
 
+Sun Feb 16 11:44:19 2020
+ERROR: Expired activation key
+
+Sun Feb 16 11:44:45 2020
+ERROR: Expired activation key
+
+Fri Feb 14 11:53:01 2020
+ERROR: Expired activation key
+
+Fri Feb 14 11:53:15 2020
+ERROR: Expired activation key
+

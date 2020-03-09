@@ -11,7 +11,7 @@ from collections import namedtuple
 from models_cont import PPO
 from itertools import count
 
-envname = 'Hopper-v1'
+envname = 'Hopper-v2'
 
 POLICY = 'mlp'
 env = gym.envs.make(envname)
@@ -20,9 +20,10 @@ num_action = env.action_space.shape[0]
 agent_1 = PPO(num_state, num_action)
 agent_2 = PPO(num_state, num_action)
 
+
 Transition = namedtuple('Transition', ['state', 'action', 'a_log_prob', 'reward', 'next_state'])
 
-trajs_demo = pickle.load(open('./data/Hopper-v1.pkl', 'rb'))
+trajs_demo = pickle.load(open('./data/Hopper-v1.pkl', 'rb'))  #TODO
 ld_demo = DataLoader(DS_Inv(trajs_demo), batch_size=100, shuffle=True)  # ob1, a, ob2
 
 print(len(ld_demo))
@@ -95,25 +96,27 @@ for e in range(EPOCHS):
     for obs1, _, obs2 in ld_demo:
         obs1 = obs1.double()
         obs2 = obs2.double()
-        out = model_1.pred_inv(obs1, obs2)
+        out = model_1.pred_inv(obs1, obs2)  # action
         obs = obs1.cpu().detach().numpy()
         out = out.cpu().detach().numpy()
         prob = out.max(axis=1)
-        out = np.argmax(out, axis=1)
+        out = np.argmax(out, axis=1)  #TODO
         for i in range(100):
             traj_policy.append([obs[i], out[i], prob[i], obs2.cpu().detach().numpy()[i]])
     # step4, update policy via demo samples
-    ld_policy = DataLoader(DS_Policy_2(traj_policy), batch_size=1000, shuffle=True)
+    ld_policy = DataLoader(DS_Policy_2(traj_policy), batch_size=1000, shuffle=True) # [obs, act, p, ob2]
 
     cnt = 0
     del agent_1.buffer[:]
+
+    # obs1, obs2 from demo; act(dim 1), action_prob(dim 1) from idm
     for obs, act, action_prob, obs2 in ld_policy:
         cnt += 1
         if cnt == 2:
             break
         for i in range(len(obs)):
             reward = np.square(
-                float(act[i]) - float(model_2.pred_inv(obs[i].reshape(1, -1), obs2[i].reshape(1, -1))[0][0]))
+                float(act[i]) - float(model_2.pred_inv(obs[i].reshape(1, -1), obs2[i].reshape(1, -1))[0][0]))  # TODO
             trans = Transition(obs[i].numpy(), act[i].int(), action_prob[i].float(), reward, obs2[i].numpy())
             agent_1.store_transition(trans)
     # print('length of buffer: ', len(agent.buffer))
@@ -239,7 +242,7 @@ print(rews.mean(), rews.std(), rews.max())
 # change environment parameters and check the model performance under the different environments
 rew = []
 for k in range(10):
-    new_env = gym.make('Hopper-v1')
+    new_env = gym.make('Hopper-v2')
     mb = new_env.env.model.body_mass
     mb = np.array(mb)
     np.random.seed(19)

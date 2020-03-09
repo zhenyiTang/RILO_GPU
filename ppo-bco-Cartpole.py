@@ -61,6 +61,7 @@ for e in range(episodes):
                 act = env.action_space.sample()
             # get the next_obs
             next_obs, rew_one_step, done, _ = env.step(act)
+            # env.render() #TZY : only render for now
             # regular update
             trajs_inv.append([obs, act, next_obs])
             obs = next_obs
@@ -163,6 +164,7 @@ for i in range(eps):
             out = model.pred_act_by_policy(T.tensor(obs).float()).cpu().detach().numpy()
             act = np.argmax(out)
         obs, rew_one_step, done, _ = env.step(act)
+        env.render()  # TZY : only render for now
         # print(done)
         rew_tol += rew_one_step
         tra_l += 1

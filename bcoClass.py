@@ -4,16 +4,16 @@ import torch.nn as nn
 
 class BCO(nn.Module):
     def __init__(self, env):
-        super(BCO, self).__init__()
+        super(BCO, self).__init__()  # same as nn.Module.__init__()
         try:
-            self.nAct = env.action_space.shape[0]
+            self.nAct = env.action_space.shape[0]  # 3 stands for x, y, z
             self.loss_func = nn.MSELoss()
         except:
             self.nAct = env.action_space.n
             self.loss_func = nn.CrossEntropyLoss()
-        self.nObs = env.observation_space.shape[0]
+        self.nObs = env.observation_space.shape[0]  # observation space has 11 dim
         self.epsilon = 0.9
-        self.decay_rate = 0.5
+        self.decay_rate = 0.9
         # 0.9, 0.5, 5e-3
         self.build_policy_model()
         self.build_inverse_dynamic_model()

@@ -15,7 +15,7 @@ import torch.optim as optim
 from torch.distributions import Normal, Categorical
 from torch.utils.data.sampler import BatchSampler, SubsetRandomSampler
 from tensorboardX import SummaryWriter
-envname = 'Hopper-v1'
+envname = 'Hopper-v2' # TZY: change from v1 to v2
 env_1 = gym.make(envname)
 # Parameters
 gamma = 0.99

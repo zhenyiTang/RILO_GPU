@@ -166,7 +166,7 @@ def generate_data(envname):
         print(rew_tol, tra_l)
     print(rews.mean(), rews.std(), rews.max())
 
-generate_data('Hopper-v1')
+generate_data('Hopper-v2')
 
 # expert policy:
 # reacher -4.1749+_1.9258 max = -0.8450

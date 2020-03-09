@@ -16,15 +16,17 @@ model = BCO(env)
 
 # number of episodes
 episodes = 25
-
 # the number of transitions we use to train
 # the inverse dynamic model over one episode
 transition_max = 1000
 
 # load trajs from the expert
 demo_batch_size = 100
-trajs_demo = pickle.load(open('./data/' + envname + '.pkl', 'rb'))
+print("before trajs_demo")
+trajs_demo = pickle.load(open('./data/cartpole_zoo.pkl', 'rb'))
+print("before ld_demo")
 ld_demo = DataLoader(DS_Inv(trajs_demo), batch_size=demo_batch_size)
+print("finish loading")
 
 # training
 for e in range(episodes):
@@ -53,6 +55,7 @@ for e in range(episodes):
                 act = env.action_space.sample()
             # get the next_obs
             next_obs, rew_one_step, done, _ = env.step(act)
+            # env.render()  # TZY : only render for now
             # regular update
             trajs_inv.append([obs, act, next_obs])
             obs = next_obs
@@ -67,6 +70,7 @@ for e in range(episodes):
 
     # get the average reward over all the trajs
     rew_avg = rew_tot / traj_num
+    print("rew_avg : ", rew_avg)
 
     ######## step2, update inverse model ########
     ld_inv = DataLoader(DS_Inv(trajs_inv), batch_size=32, shuffle=True)
@@ -145,6 +149,8 @@ for i in range(eps):
             out = model.pred_act_by_policy(T.tensor(obs).float()).cpu().detach().numpy()
             act = np.argmax(out)
         obs, rew_one_step, done, _ = env.step(act)
+        print("render the trained BCO")
+        env.render()  # TZY : only render for now
         # print(done)
         rew_tol += rew_one_step
         tra_l += 1
@@ -181,6 +187,8 @@ for k in range(10):
             act = model.pred_act_by_policy(T.tensor(obs).float()).cpu().detach().numpy()
             act = np.argmax(act)
             obs, rew_one_step, done, _ = new_env.step(act)
+            print("rendering")
+            env.render()  # TZY : only render for now
             rew_tol += rew_one_step
             tra_l += 1
         rews[i] = rew_tol
