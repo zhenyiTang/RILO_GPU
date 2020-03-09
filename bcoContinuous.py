@@ -1,4 +1,5 @@
 import gym
+import time
 import pickle
 import numpy as np
 import torch as T
@@ -31,6 +32,8 @@ ld_demo = DataLoader(DS_Inv(trajs_demo), batch_size=demo_batch_size)
 # for e in tqdm(range(episodes)):
 # after for loop, we will have a good policy model from idm
 for e in range(episodes):
+    start_ts = time.time()
+
     trajs_inv = []
 
     ######## step1, generate inverse samples using random and policy mix ########
@@ -123,7 +126,7 @@ for e in range(episodes):
     print('Ep %d: reward=%.2f,'
           'loss_inv=%.3f,loss_policy=%.3f '
           % (e + 1, rew_avg, ls_tot_inv / len(ld_inv), ls_avg))
-
+    print("{} secs".format(time.time() - start_ts))
     ######## step5, save model ########
     # T.save(model.state_dict(), 'model/model_cart-pole_%d.pt' % (e + 1))
     model.lower_exploration_rate()
